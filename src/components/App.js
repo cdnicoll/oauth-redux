@@ -3,7 +3,14 @@ import OAuth from './OAuth';
 
 class App extends React.Component {
   render() {
-    return <div><OAuth /></div>;
+    const divStyle = {
+      padding: '100px'
+    };
+    return (
+      <div style={divStyle} className='ui container'>
+        <OAuth />
+      </div>
+    );
   }
 }
 
