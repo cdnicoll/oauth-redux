@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
+import oauthReducers from './oauthReducers';
 
 export default combineReducers({
-  foobar: () => 'foobar'
+  auth: oauthReducers
 });
