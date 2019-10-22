@@ -17,22 +17,49 @@ class OAuth extends React.Component {
         })
         .then(() => {
           this.auth = window.gapi.auth2.getAuthInstance();
+          this.onAuthChange(this.auth.isSignedIn.get());
+          this.auth.isSignedIn.listen(this.onAuthChange);
         });
     });
   }
 
+  onAuthChange = isSignedIn => {
+    if (isSignedIn) {
+      const profile = this.auth.currentUser.get().getBasicProfile();
+      const googleProfile = {
+        id: profile.getId(),
+        name: profile.getName(),
+        profileImage: profile.getImageUrl(),
+        email: profile.getEmail(),
+      };
+      this.setState({ user: googleProfile });
+      this.props.signIn(googleProfile);
+    } else {
+      this.props.signOut();
+    }
+  };
+
+  onSignInClick = () => {
+    this.auth.signIn();
+  };
+
   onSignOutClick = () => {
-    //
+    this.auth.signOut();
+  };
+
+  renderGoogleCard() {
+    if (this.props.isSignedIn === null) {
+      // we have an empty state, redux is still trying to figure out whats going on
+      return null;
+    } else if (this.props.isSignedIn) {
+      return <GoogleSignedInCard onSignOutClick={this.onSignOutClick} profile={this.state.user} />;
+    } else {
+      return <GoogleSignedOutCard onSignInClick={this.onSignInClick} />;
+    }
   }
 
   render() {
-    console.log(this.auth);
-    return (
-      <div>
-        {/* <GoogleCard /> */}
-        <GoogleSignedOutCard onSignInClick={this.onSignOutClick} />
-      </div>
-    );
+    return <div>{this.renderGoogleCard()}</div>;
   }
 }
 
