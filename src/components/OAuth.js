@@ -32,7 +32,6 @@ class OAuth extends React.Component {
         profileImage: profile.getImageUrl(),
         email: profile.getEmail(),
       };
-      this.setState({ user: googleProfile });
       this.props.signIn(googleProfile);
     } else {
       this.props.signOut();
@@ -52,7 +51,14 @@ class OAuth extends React.Component {
       // we have an empty state, redux is still trying to figure out whats going on
       return null;
     } else if (this.props.isSignedIn) {
-      return <GoogleSignedInCard onSignOutClick={this.onSignOutClick} profile={this.state.user} />;
+      return (
+        <div>
+          <GoogleSignedInCard
+            onSignOutClick={this.onSignOutClick}
+            profile={this.props.userProfile}
+          />
+        </div>
+      );
     } else {
       return <GoogleSignedOutCard onSignInClick={this.onSignInClick} />;
     }
@@ -64,7 +70,10 @@ class OAuth extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { isSignedIn: state.auth.isSignedIn };
+  return {
+    isSignedIn: state.auth.isSignedIn,
+    userProfile: state.auth.userProfile,
+  };
 };
 
 export default connect(
